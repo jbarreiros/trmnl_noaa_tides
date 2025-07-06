@@ -1,0 +1,34 @@
+{% liquid
+  # To show the next 8 tides starting from the current time, we need to find
+  # which tide is happening right now. The "tides" array contains predictions
+  # for entire days, so we loop through it to find the index of the tide
+  # closest to "now".
+  assign current_tide_index = -1
+  for tide in tides
+    assign tide_time_utc_seconds = tide.t | date: "%s"
+    if tide_time_utc_seconds < now_utc_seconds
+      assign current_tide_index = current_tide_index | plus: 1
+    endif
+  endfor
+%}
+
+<div class="layout layout--col">
+
+  <div class="border--h-7 pb--2 w--full text--center">
+    <div class="title">
+      {% render "tide_direction" current_tide: tides[current_tide_index] %}
+    </div>
+    <div class="description">{{ station_name }} ({{ station_id }})</div>
+  </div>
+
+  <div class="stretch">
+    <div class="grid grid--cols-4 h--full">
+      {% for tide in tides offset: current_tide_index, limit: 4 %}
+        {% render "tide_tile", icon_size: 32, utc_offset: trmnl.user.utc_offset, time: tide.t, tide_direction: tide.type %}
+      {% endfor %}
+    </div>
+  </div><!-- stretch -->
+
+</div><!--/layout-->
+
+{% render "title_bar", instance: trmnl.plugin_settings.instance_name, updated: trmnl.system.timestamp_utc %}

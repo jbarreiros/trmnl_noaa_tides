@@ -1,0 +1,93 @@
+{% liquid
+  # To show the next 8 tides starting from the current time, we need to find
+  # which tide is happening right now. The "tides" array contains predictions
+  # for entire days, so we loop through it to find the index of the tide
+  # closest to "now".
+  assign current_tide_index = -1
+  for tide in tides
+    assign tide_time_utc_seconds = tide.t | date: "%s"
+    if tide_time_utc_seconds < now_utc_seconds
+      assign current_tide_index = current_tide_index | plus: 1
+    endif
+  endfor
+%}
+
+{% liquid
+  # Find the high tides on Saturday and Sunday.
+  assign saturday_high_1 = nil
+  assign saturday_high_2 = nil
+  assign sunday_high_1 = nil
+  assign sunday_high_2 = nil
+  assign saturday_count = 0
+  assign sunday_count = 0
+  for tide in tides
+    assign tide_week_day = tide.t | date: "%w"
+    if tide.type == 'H'
+      if tide_week_day == '6' and saturday_count < 2
+        if saturday_count == 0
+          assign saturday_high_1 = tide.t
+        else
+          assign saturday_high_2 = tide.t
+        endif
+        assign saturday_count = saturday_count | plus: 1
+      elsif tide_week_day == '0' and sunday_count < 2
+        if sunday_count == 0
+          assign sunday_high_1 = tide.t
+        else
+          assign sunday_high_2 = tide.t
+        endif
+        assign sunday_count = sunday_count | plus: 1
+      endif
+    endif
+  endfor
+%}
+
+<div class="layout layout--col">
+
+  <div class="grid grid--cols-2 border--h-7 pb--4">
+    <div class="col">
+      <span class="value" data-value-fit="true">
+        {% render "tide_direction" current_tide: tides[current_tide_index] %}
+      </span>
+    </div>
+    <div class="col col--end">
+      <div class="text--right label">{{ station_name }}</div>
+      <div class="text--right description">{{ station_id }}</div>
+    </div>
+  </div><!--/grid-->
+
+  <div class="stretch">
+    <div class="grid grid--cols-8 border--h-7 pb--4 h--full">
+      {% for tide in tides offset: current_tide_index, limit: 8 %}
+        {% render "tide_tile", utc_offset: trmnl.user.utc_offset, time: tide.t, tide_direction: tide.type %}
+      {% endfor %}
+    </div><!--/grid-->
+  </div><!--/stretch-->
+
+  {% if now_is_weekend == false %}
+  <div class="grid grid--cols-4">
+    <div class="col--span-2">
+      <span class="title">Weekend Outlook</span>
+    </div>
+    <div class="item">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="title title--small">{{ saturday_high_1 | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}</span>
+        <span class="title title--small">{{ saturday_high_2 | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}</span>
+        <span class="description">{{ saturday_high_1 | date: "%s" | plus: trmnl.user.utc_offset | date: "%A" }} High Tides</span>
+      </div><!--/content-->
+    </div><!--/item-->
+    <div class="item">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="title title--small">{{ sunday_high_1 | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}</span>
+        <span class="title title--small">{{ sunday_high_2 | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}</span>
+        <span class="description">{{ sunday_high_1 | date: "%s" | plus: trmnl.user.utc_offset | date: "%A" }} High Tides</span>
+      </div><!--/content-->
+    </div><!--/item-->
+  </div><!--/grid-->
+  {% endif %}
+
+</div><!--/layout-->
+
+{% render "title_bar", instance: trmnl.plugin_settings.instance_name, now: now_utc_seconds, utc_offset: trmnl.user.utc_offset %}

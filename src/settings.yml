@@ -1,0 +1,31 @@
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+polling_url: |
+  https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{{ station_id }}.json
+  https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={{ "now" | date: "%s" | minus: 86400 | date: "%Y%m%d" }}&range=192&interval=hilo&station={{ station_id }}&product=predictions&datum={{ datum }}&time_zone=gmt&units={{ units }}&format=json
+polling_headers: ''
+polling_body: ''
+id: 98475
+custom_fields:
+  - keyname: station_id
+    field_type: string
+    name: Station ID
+    description: Find your station at https://tidesandcurrents.noaa.gov/
+  - keyname: units
+    field_type: select
+    name: Units
+    description: Select the units for the tide data.
+    options:
+      - English (feet): english
+      - Metric (meters): metric
+    default: english
+  - keyname: datum
+    field_type: string
+    name: Datum
+    default: MLLW
+name: Upcoming Tides (NOAA)
+refresh_interval: 60
