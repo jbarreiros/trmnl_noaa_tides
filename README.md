@@ -6,6 +6,14 @@ A Plugin for the TRMNL device that shows upcoming low and high tides. On weekday
 
 To identify your station ID, go to https://tidesandcurrents.noaa.gov/.
 
+Monday - Friday with weekend outlook:
+
+![](assets/screenshots.png)
+
+Sat - Sun:
+
+![](assets/screenshots-without-weekend.png)
+
 ## How It Works
 
 When this recipe polls, it fetches two datasets.
