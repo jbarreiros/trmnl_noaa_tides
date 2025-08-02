@@ -24,7 +24,14 @@
   <div class="stretch">
     <div class="grid grid--cols-4 h--full">
       {% for tide in tides offset: current_tide_index, limit: 4 %}
-        {% render "tide_tile", icon_size: 32, utc_offset: trmnl.user.utc_offset, time: tide.t, tide_direction: tide.type %}
+        <div class="flex flex--col flex--center-y">
+          <div class="label label--small {% if tide.type == "H" %}label--inverted{% endif %}">
+            {{ tide.t | date: "%s" | plus: utc_offset | date: "%-I:%M" }}
+            {{ tide.t | date: "%s" | plus: utc_offset | date: "%p" }}
+          </div>
+          {% render "tide_tile_icon", icon_size: 32, tide_direction: tide.type %}
+          <div class="label label--small">{{ tide.t | date: "%s" | plus: utc_offset | date: "%b %e" }}</div>
+        </div>
       {% endfor %}
     </div>
   </div><!-- stretch -->

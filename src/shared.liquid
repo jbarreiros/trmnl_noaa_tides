@@ -27,18 +27,12 @@ endif
 {% endif %}
 {% endtemplate %}
 
-{% template tide_tile %}
-<div class="flex flex--col flex--center-y">
-  <div class="label label--small {% if tide_direction == "H" %}label--inverted{% endif %}">
-    {{ time | date: "%s" | plus: utc_offset | date: "%-I:%M %p" }}
-  </div>
+{% template tide_tile_icon %}
   {% if tide_direction == "H" %}
     {% render "high_tide_svg" icon_size: icon_size %}
-    {% elsif tide_direction == "L" %}
-      {% render "low_tide_svg" icon_size: icon_size %}
+  {% elsif tide_direction == "L" %}
+    {% render "low_tide_svg" icon_size: icon_size %}
   {% endif %}
-  <div class="label label--small">{{ time | date: "%s" | plus: utc_offset | date: "%b %e" }}</div>
-</div>
 {% endtemplate %}
 
 {% template high_tide_svg %}

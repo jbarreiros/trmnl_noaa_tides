@@ -28,7 +28,7 @@
           <div class="w--full text--right">
             <span style="display:inline;" class="label label--small {% if tide.type == "H" %}label--inverted{% endif %}">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p"}}</span>
           </div>
-          <div>
+          <div class="px--6">
             {% if tide.type == "H" %}
               {% render "high_tide_svg" icon_size: 36 %}
             {% else %}

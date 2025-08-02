@@ -59,7 +59,17 @@
   <div class="stretch">
     <div class="grid grid--cols-8 border--h-7 pb--4 h--full">
       {% for tide in tides offset: current_tide_index, limit: 8 %}
-        {% render "tide_tile", utc_offset: trmnl.user.utc_offset, time: tide.t, tide_direction: tide.type %}
+        <div class="flex flex--col flex--center-y">
+          <div
+            class="value value--xsmall text--center p--1 {% if tide.type == "H" %}bg--gray-5 text-stroke text-stroke--small{% endif %}"
+            style="border-radius:4px;"
+          >
+            <div>{{ tide.t | date: "%s" | plus: utc_offset | date: "%-I:%M" }}</div>
+            <div style="font-size:80%;">{{ tide.t | date: "%s" | plus: utc_offset | date: "%p" }}</div>
+          </div>
+          {% render "tide_tile_icon", tide_direction: tide.type %}
+          <div class="value value--xxsmall pt--4">{{ tide.t | date: "%s" | plus: utc_offset | date: "%b %e" }}</div>
+        </div>
       {% endfor %}
     </div><!--/grid-->
   </div><!--/stretch-->
