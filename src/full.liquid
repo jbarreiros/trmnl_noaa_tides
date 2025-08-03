@@ -64,11 +64,11 @@
             class="value value--xsmall text--center p--1 {% if tide.type == "H" %}bg--gray-5 text-stroke text-stroke--small{% endif %}"
             style="border-radius:4px;"
           >
-            <div>{{ tide.t | date: "%s" | plus: utc_offset | date: "%-I:%M" }}</div>
-            <div style="font-size:80%;">{{ tide.t | date: "%s" | plus: utc_offset | date: "%p" }}</div>
+            <div>{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M" }}</div>
+            <div style="font-size:80%;">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%p" }}</div>
           </div>
           {% render "tide_tile_icon", tide_direction: tide.type %}
-          <div class="value value--xxsmall pt--4">{{ tide.t | date: "%s" | plus: utc_offset | date: "%b %e" }}</div>
+          <div class="value value--xxsmall pt--4">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%b %e" }}</div>
         </div>
       {% endfor %}
     </div><!--/grid-->

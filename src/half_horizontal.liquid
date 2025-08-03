@@ -68,11 +68,11 @@
       {% for tide in tides offset: current_tide_index, limit: tile_limit %}
         <div class="flex flex--col flex--center-y">
           <div class="label label--small {% if tide.type == "H" %}label--inverted{% endif %}">
-            {{ tide.t | date: "%s" | plus: utc_offset | date: "%-I:%M" }}
-            {{ tide.t | date: "%s" | plus: utc_offset | date: "%p" }}
+            {{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M" }}
+            {{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%p" }}
           </div>
           {% render "tide_tile_icon", icon_size: 32, tide_direction: tide.type %}
-          <div class="label label--small">{{ tide.t | date: "%s" | plus: utc_offset | date: "%b %e" }}</div>
+          <div class="label label--small">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%b %e" }}</div>
         </div>
       {% endfor %}
 
