@@ -9,7 +9,6 @@ watch:
 # values of custom fields (defined in src/settings.yml)
 custom_fields:
   station_id: '{{ env.STATION_ID }}'
-  units: english
   datum: MLLW
   time_format: 24-hour
 
