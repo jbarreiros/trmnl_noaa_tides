@@ -1,6 +1,7 @@
 {% assign station_id = IDX_0.stations[0].id %}
 {% assign station_name = IDX_0.stations[0].name | append: ", " | append: IDX_0.stations[0].state %}
 {% assign tides = IDX_1.predictions %}
+{% assign time_format = trmnl.plugin_settings.custom_fields_values.time_format %}
 {% assign now_utc_seconds = "now" | date: "%s" %}
 
 {% liquid
@@ -15,7 +16,14 @@ endif
 <div class="title_bar">
   <img class="image" src="https://raw.githubusercontent.com/jbarreiros/trmnl_noaa_tides/refs/heads/main/assets/noaa.svg" />
   <div class="title">{{ instance }}</div>
-  <div class="instance" style="font-size:70%;">Updated: {{ now | plus: utc_offset | date: "%-I:%M %p" }}</div>
+  <div class="instance" style="font-size:70%;">
+    Updated:
+    {% if format == "12-hour" %}
+      {{ now | plus: utc_offset | date: "%-I:%M %p" }}
+    {% else %}
+      {{ now | plus: utc_offset | date: "%H:%M" }}
+    {% endif %}
+  </div>
 </div>
 {% endtemplate %}
 

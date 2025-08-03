@@ -11,6 +11,7 @@ custom_fields:
   station_id: '{{ env.STATION_ID }}'
   units: english
   datum: MLLW
+  time_format: 24-hour
 
 time_zone: America/New_York
 

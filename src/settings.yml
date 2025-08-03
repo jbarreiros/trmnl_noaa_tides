@@ -11,28 +11,35 @@ polling_headers: ''
 polling_body: ''
 id: 98475
 custom_fields:
-- keyname: author_bio
-  name: About This Plugin
-  field_type: author_bio
-  description: Upcoming low and high tides, provided by NOAA. On weekdays, it also highlights the upcoming weekend high tides.
-  github_url: https://github.com/jbarreiros/trmnl_noaa_tides
-  learn_more_url: https://github.com/jbarreiros/trmnl_noaa_tides
-  email_address: johnbarreiros2@gmail.com
-- keyname: station_id
-  field_type: string
-  name: Station ID
-  description: Find your station at https://tidesandcurrents.noaa.gov/
-- keyname: units
-  field_type: select
-  name: Units
-  description: Select the units for the tide data.
-  options:
-  - English (feet): english
-  - Metric (meters): metric
-  default: english
-- keyname: datum
-  field_type: string
-  name: Datum
-  default: MLLW
+  - keyname: author_bio
+    name: About This Plugin
+    field_type: author_bio
+    description: Upcoming low and high tides, provided by NOAA. On weekdays, it also highlights the upcoming weekend high tides.
+    github_url: https://github.com/jbarreiros/trmnl_noaa_tides
+    learn_more_url: https://github.com/jbarreiros/trmnl_noaa_tides
+    email_address: johnbarreiros2@gmail.com
+  - keyname: station_id
+    field_type: string
+    name: Station ID
+    description: Find your station at https://tidesandcurrents.noaa.gov/
+  - keyname: units
+    field_type: select
+    name: Units
+    description: Select the units for the tide data.
+    options:
+      - English (feet): english
+      - Metric (meters): metric
+    default: english
+  - keyname: time_format
+    field_type: select
+    name: Time Format
+    options:
+      - 12-hour (AM/PM): 12-hour
+      - 24-hour: 24-hour
+    default: 12-hour
+  - keyname: datum
+    field_type: string
+    name: Datum
+    default: MLLW
 name: Upcoming Tides (NOAA)
 refresh_interval: 60

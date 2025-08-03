@@ -26,7 +26,13 @@
       {% for tide in tides offset: current_tide_index, limit: 6 %}
         <div class="flex flex--row flex--center">
           <div class="w--full text--right">
-            <span style="display:inline;" class="label label--small {% if tide.type == "H" %}label--inverted{% endif %}">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p"}}</span>
+            <span style="display:inline;" class="label label--small {% if tide.type == "H" %}label--outline{% endif %}">
+              {% if time_format == "12-hour" %}
+                {{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}
+              {%  else  %}
+                {{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%H:%M" }}
+              {% endif %}
+            </span>
           </div>
           <div class="px--6">
             {% if tide.type == "H" %}
@@ -43,4 +49,4 @@
 
 </div><!--/layout-->
 
-{% render "title_bar", instance: trmnl.plugin_settings.instance_name, updated: trmnl.system.timestamp_utc %}
+{% render "title_bar", instance: trmnl.plugin_settings.instance_name, now: now_utc_seconds, utc_offset: trmnl.user.utc_offset, format: time_format %}

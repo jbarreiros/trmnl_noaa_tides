@@ -64,8 +64,12 @@
             class="value value--xsmall text--center p--1 {% if tide.type == "H" %}bg--gray-5 text-stroke text-stroke--small{% endif %}"
             style="border-radius:4px;"
           >
-            <div>{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M" }}</div>
-            <div style="font-size:80%;">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%p" }}</div>
+            {% if time_format == "12-hour" %}
+              <div>{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M" }}</div>
+              <div style="font-size:80%;">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%p" }}</div>
+            {% else %}
+              <div>{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%H:%M" }}</div>
+            {% endif %}
           </div>
           {% render "tide_tile_icon", tide_direction: tide.type %}
           <div class="value value--xxsmall pt--4">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%b %e" }}</div>
@@ -100,4 +104,4 @@
 
 </div><!--/layout-->
 
-{% render "title_bar", instance: trmnl.plugin_settings.instance_name, now: now_utc_seconds, utc_offset: trmnl.user.utc_offset %}
+{% render "title_bar", instance: trmnl.plugin_settings.instance_name, now: now_utc_seconds, utc_offset: trmnl.user.utc_offset, format: time_format %}
