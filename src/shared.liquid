@@ -17,7 +17,9 @@ endif
   <img class="image" src="https://raw.githubusercontent.com/jbarreiros/trmnl_noaa_tides/refs/heads/main/assets/noaa.svg" />
   <div class="title">{{ instance }}</div>
   <div class="instance" style="font-size:70%;">
+    {% if condensed == blank %}
     Updated:
+    {% endif %}
     {% if format == "12-hour" %}
       {{ now | plus: utc_offset | date: "%-I:%M %p" }}
     {% else %}

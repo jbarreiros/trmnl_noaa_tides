@@ -21,7 +21,7 @@ custom_fields:
   - keyname: station_id
     field_type: string
     name: Station ID
-    description: Find your station at https://tidesandcurrents.noaa.gov/
+    description: Find your station at <a href="https://tidesandcurrents.noaa.gov/">https://tidesandcurrents.noaa.gov/</a>
   - keyname: time_format
     field_type: select
     name: Time Format
@@ -32,6 +32,8 @@ custom_fields:
   - keyname: datum
     field_type: string
     name: Datum
+    description: The default option <b>MLLW</b> represents the average of the lower low water height of each tidal day observed over the National Tidal Datum Epoch.
     default: MLLW
+    help_text: See <a href="https://tidesandcurrents.noaa.gov/datum_options.html">all datums</a>.
 name: Upcoming Tides (NOAA)
 refresh_interval: 60
