@@ -59,7 +59,7 @@
   <div class="stretch">
     <div class="grid grid--cols-8 border--h-7 pb--4 h--full">
       {% for tide in tides offset: current_tide_index, limit: 8 %}
-        <div class="flex flex--col flex--center-y">
+        <div class="flex flex--col flex--center-y" style="justify-content: space-around !important;">
           <div
             class="value value--xsmall text--center p--1 {% if tide.type == "H" %}bg--gray-5 text-stroke text-stroke--small{% endif %}"
             style="border-radius:4px;"

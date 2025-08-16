@@ -34,7 +34,7 @@
               {% endif %}
             </span>
           </div>
-          <div class="px--6">
+          <div class="px--12">
             {% if tide.type == "H" %}
               {% render "high_tide_svg" icon_size: 36 %}
             {% else %}
@@ -49,4 +49,4 @@
 
 </div><!--/layout-->
 
-{% render "title_bar", instance: trmnl.plugin_settings.instance_name, now: now_utc_seconds, utc_offset: trmnl.user.utc_offset, format: time_format, condensed: true %}
+{% render "title_bar", instance: trmnl.plugin_settings.instance_name, now: now_utc_seconds, utc_offset: trmnl.user.utc_offset, format: time_format %}
