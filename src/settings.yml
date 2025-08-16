@@ -5,8 +5,8 @@ dark_mode: 'no'
 static_data: ''
 polling_verb: get
 polling_url: |
-  https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{{ station_id }}.json
   https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={{ "now" | date: "%s" | minus: 86400 | date: "%Y%m%d" }}&range=192&interval=hilo&station={{ station_id }}&product=predictions&datum={{ datum }}&time_zone=gmt&units=metric&format=json
+  https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{{ station_id }}.json
 polling_headers: ''
 polling_body: ''
 id: 98475
