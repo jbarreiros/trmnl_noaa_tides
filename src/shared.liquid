@@ -1,37 +1,74 @@
-{% assign station_id = IDX_1.stations[0].id %}
-{% assign station_name = IDX_1.stations[0].name | append: ", " | append: IDX_1.stations[0].state %}
-{% assign tides = IDX_0.predictions %}
-{% assign time_format = trmnl.plugin_settings.custom_fields_values.time_format %}
-{% assign now_utc_seconds = "now" | date: "%s" %}
-
 {% liquid
+assign station_id = IDX_1.stations[0].id
+assign station_name = IDX_1.stations[0].name | append: ", " | append: IDX_1.stations[0].state
+assign tides = IDX_0.predictions
+assign time_format = trmnl.plugin_settings.custom_fields_values.time_format
+assign now_utc_seconds = "now" | date: "%s"
+assign show_tide_levels = trmnl.plugin_settings.custom_fields_values.show_tide_levels
+assign units_symbol = trmnl.plugin_settings.custom_fields_values.units | replace: "english", "ft" | replace: "metric", "m"
+
 assign now_weekday = "now" | date: "%s" | plus: trmnl.user.utc_offset | date: "%w"
 assign now_is_weekend = false
 if now_weekday == '6' or now_weekday == '0'
   assign now_is_weekend = true
 endif
+
+# To show the upcoming tides starting from the current time, we need to find
+# which tide is happening right now. The "tides" array contains predictions
+# for entire days, so we loop through it to find the index of the tide
+# closest to "now".
+assign current_tide_index = -1
+for tide in tides
+  assign tide_time_utc_seconds = tide.t | date: "%s"
+  if tide_time_utc_seconds < now_utc_seconds
+    assign current_tide_index = current_tide_index | plus: 1
+  endif
+endfor
+
+# Find the high tides on Saturday and Sunday.
+# Note, there may only be one high tide on a given day.
+assign saturday_high_1 = nil
+assign saturday_high_2 = nil
+assign sunday_high_1 = nil
+assign sunday_high_2 = nil
+for tide in tides | where: "type", "H"
+  assign tide_week_day = tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%w"
+  if tide_week_day == '6'
+    if saturday_high_1 == nil
+      assign saturday_high_1 = tide.t
+    else
+      assign saturday_high_2 = tide.t
+    endif
+  elsif tide_week_day == '0'
+    if sunday_high_1 == nil
+      assign sunday_high_1 = tide.t
+    else
+      assign sunday_high_2 = tide.t
+    endif
+  endif
+endfor
 %}
 
 {% template title_bar %}
-<div class="title_bar">
-  <img class="image" src="https://raw.githubusercontent.com/jbarreiros/trmnl_noaa_tides/refs/heads/main/assets/noaa.svg" />
-  <div class="title">{{ instance }}</div>
-  <div class="instance" style="font-size:70%;">
-    {% if format == "12-hour" %}
-      {{ now | plus: utc_offset | date: "%-I:%M %p" }}
-    {% else %}
-      {{ now | plus: utc_offset | date: "%H:%M" }}
-    {% endif %}
+  <div class="title_bar">
+    <img class="image" src="https://raw.githubusercontent.com/jbarreiros/trmnl_noaa_tides/refs/heads/main/assets/noaa.svg" />
+    <div class="title">{{ instance }}</div>
+    <div class="instance">
+      {% if format == "12-hour" %}
+        {{ now | plus: utc_offset | date: "%-I:%M %p" }}
+      {% else %}
+        {{ now | plus: utc_offset | date: "%H:%M" }}
+      {% endif %}
+    </div>
   </div>
-</div>
 {% endtemplate %}
 
 {% template tide_direction %}
-{% if current_tide.type == 'L' %}
-  The tide is rising
-{% else %}
-  The tide is falling
-{% endif %}
+  {% if current_tide.type == 'L' %}
+    The tide is rising
+  {% else %}
+    The tide is falling
+  {% endif %}
 {% endtemplate %}
 
 {% template tide_tile_icon %}
@@ -43,27 +80,27 @@ endif
 {% endtemplate %}
 
 {% template high_tide_svg %}
-<svg width="{{ icon_size | default: 72 }}" height="{{ icon_size | default: 72 }}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Upward arrowhead -->
-  <path d="M40 25 L50 15 L60 25" stroke="black" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Arrow stem (10px shorter) -->
-  <line x1="50" y1="15" x2="50" y2="40" stroke="black" stroke-width="4" stroke-linecap="round"/>
-  <!-- Waves -->
-  <path d="M10 60 Q20 50, 30 60 T50 60 T70 60 T90 60" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M10 70 Q20 60, 30 70 T50 70 T70 70 T90 70" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M10 80 Q20 70, 30 80 T50 80 T70 80 T90 80" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M10 90 Q20 80, 30 90 T50 90 T70 90 T90 90" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
-</svg>
+  <svg width="{{ icon_size | default: 72 }}" height="{{ icon_size | default: 72 }}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Upward arrowhead -->
+    <path d="M40 25 L50 15 L60 25" stroke="black" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Arrow stem (10px shorter) -->
+    <line x1="50" y1="15" x2="50" y2="40" stroke="black" stroke-width="4" stroke-linecap="round"/>
+    <!-- Waves -->
+    <path d="M10 60 Q20 50, 30 60 T50 60 T70 60 T90 60" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M10 70 Q20 60, 30 70 T50 70 T70 70 T90 70" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M10 80 Q20 70, 30 80 T50 80 T70 80 T90 80" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M10 90 Q20 80, 30 90 T50 90 T70 90 T90 90" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </svg>
 {% endtemplate %}
 
 {% template low_tide_svg %}
-<svg width="{{ icon_size | default: 72 }}" height="{{ icon_size | default: 72 }}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Downward Arrowhead -->
-  <path d="M40 55 L50 65 L60 55" stroke="black" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Arrow stem (10px shorter) -->
-  <line x1="50" y1="40" x2="50" y2="65" stroke="black" stroke-width="4" stroke-linecap="round"/>
-  <!-- Waves -->
-  <path d="M10 80 Q20 70, 30 80 T50 80 T70 80 T90 80" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M10 90 Q20 80, 30 90 T50 90 T70 90 T90 90" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
-</svg>
+  <svg width="{{ icon_size | default: 72 }}" height="{{ icon_size | default: 72 }}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Downward Arrowhead -->
+    <path d="M40 55 L50 65 L60 55" stroke="black" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Arrow stem (10px shorter) -->
+    <line x1="50" y1="40" x2="50" y2="65" stroke="black" stroke-width="4" stroke-linecap="round"/>
+    <!-- Waves -->
+    <path d="M10 80 Q20 70, 30 80 T50 80 T70 80 T90 80" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M10 90 Q20 80, 30 90 T50 90 T70 90 T90 90" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </svg>
 {% endtemplate %}

@@ -1,72 +1,31 @@
 {% liquid
-  # To show the next 8 tides starting from the current time, we need to find
-  # which tide is happening right now. The "tides" array contains predictions
-  # for entire days, so we loop through it to find the index of the tide
-  # closest to "now".
-  assign current_tide_index = -1
-  for tide in tides
-    assign tide_time_utc_seconds = tide.t | date: "%s"
-    if tide_time_utc_seconds < now_utc_seconds
-      assign current_tide_index = current_tide_index | plus: 1
-    endif
-  endfor
-%}
-
-{% liquid
-  # Find the high tides on Saturday and Sunday.
-  assign saturday_high_1 = nil
-  assign saturday_high_2 = nil
-  assign sunday_high_1 = nil
-  assign sunday_high_2 = nil
-  assign saturday_count = 0
-  assign sunday_count = 0
-  for tide in tides
-    assign tide_week_day = tide.t | date: "%w"
-    if tide.type == 'H'
-      if tide_week_day == '6' and saturday_count < 2
-        if saturday_count == 0
-          assign saturday_high_1 = tide.t
-        else
-          assign saturday_high_2 = tide.t
-        endif
-        assign saturday_count = saturday_count | plus: 1
-      elsif tide_week_day == '0' and sunday_count < 2
-        if sunday_count == 0
-          assign sunday_high_1 = tide.t
-        else
-          assign sunday_high_2 = tide.t
-        endif
-        assign sunday_count = sunday_count | plus: 1
-      endif
-    endif
-  endfor
-%}
-
-{% liquid
   assign tile_limit = 6
   if now_is_weekend == true
     assign tile_limit = 8
   endif
 %}
 
-<div class="layout layout--col">
+<div class="layout layout--col gap--none">
 
-  <div class="grid grid--cols-2 border--h-7 pb--4">
-    <div class="col">
-      <span class="value value--small" data-value-fit="true">
+  <div class="grid grid--cols-2 border--h-4 pb--2 mb--2">
+    <div class="col col--end">
+      <span class="value value--small">
         {% render "tide_direction" current_tide: tides[current_tide_index] %}
       </span>
     </div>
     <div class="col col--end">
-      <div class="text--right label">{{ station_name }}</div>
+      <div class="text--right description">{{ station_name }}</div>
       <div class="text--right description">{{ station_id }}</div>
     </div>
   </div><!--/grid-->
 
   <div class="stretch">
     <div class="grid grid--cols-8 h--full">
+      {% assign prev_tide_day = nil %}
       {% for tide in tides offset: current_tide_index, limit: tile_limit %}
-        <div class="flex flex--col flex--center-y">
+        {% assign curr_tide_day = tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%j" %}
+        <div class="flex flex--col flex--center-y {% if prev_tide_day and curr_tide_day != prev_tide_day %}border--v-4{% endif %}">
+          {% render "tide_tile_icon", icon_size: 32, tide_direction: tide.type %}
           <div class="label label--small {% if tide.type == "H" %}label--outline{% endif %}">
             {% if time_format == "12-hour" %}
               {{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}
@@ -74,15 +33,18 @@
               {{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%H:%M" }}
             {% endif %}
           </div>
-          {% render "tide_tile_icon", icon_size: 32, tide_direction: tide.type %}
+          {% if show_tide_levels == "true" %}
+            <div class="label label--small">{{ tide.v | round: 1 }} {{ units_symbol }}</div>
+          {% endif %}
           <div class="label label--small">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%b %e" }}</div>
         </div>
+        {% assign prev_tide_day = curr_tide_day %}
       {% endfor %}
 
       {% if now_is_weekend == false %}
         <div class="col--span-2">
           <div class="flex flex--col flex--left">
-            <div class="label label">Weekend Outlook</div>
+            <div class="label">Weekend Outlook</div>
             <div class="item">
               <div class="meta"></div>
               <div class="content">
@@ -112,7 +74,6 @@
           </div><!--/flex-col-->
         </div><!--/col--span-->
       {% endif %}
-
     </div><!--/grid-->
   </div><!--/stretch-->
 

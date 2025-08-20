@@ -5,7 +5,7 @@ dark_mode: 'no'
 static_data: ''
 polling_verb: get
 polling_url: |
-  https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={{ "now" | date: "%s" | minus: 86400 | date: "%Y%m%d" }}&range=192&interval=hilo&station={{ station_id }}&product=predictions&datum={{ datum }}&time_zone=gmt&units=metric&format=json
+  https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={{ "now" | date: "%s" | minus: 86400 | date: "%Y%m%d" }}&range=192&interval=hilo&station={{ station_id }}&product=predictions&datum={{ datum }}&time_zone=gmt&units={{ units }}&format=json
   https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{{ station_id }}.json
 polling_headers: ''
 polling_body: ''
@@ -29,11 +29,22 @@ custom_fields:
       - 12-hour (AM/PM): 12-hour
       - 24-hour: 24-hour
     default: 12-hour
+  - keyname: show_tide_levels
+    field_type: boolean
+    name: Show Tide Levels
+    default: true
   - keyname: datum
     field_type: string
     name: Datum
     description: The default option <b>MLLW</b> represents the average of the lower low water height of each tidal day observed over the National Tidal Datum Epoch.
     default: MLLW
     help_text: See <a href="https://tidesandcurrents.noaa.gov/datum_options.html">all datums</a>.
+  - keyname: units
+    field_type: select
+    name: Tide Level Units
+    options:
+      - Metric: metric
+      - English: english
+    default: english
 name: Upcoming Tides (NOAA)
 refresh_interval: 60

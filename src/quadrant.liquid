@@ -1,20 +1,6 @@
-{% liquid
-  # To show the next 8 tides starting from the current time, we need to find
-  # which tide is happening right now. The "tides" array contains predictions
-  # for entire days, so we loop through it to find the index of the tide
-  # closest to "now".
-  assign current_tide_index = -1
-  for tide in tides
-    assign tide_time_utc_seconds = tide.t | date: "%s"
-    if tide_time_utc_seconds < now_utc_seconds
-      assign current_tide_index = current_tide_index | plus: 1
-    endif
-  endfor
-%}
-
 <div class="layout layout--col">
 
-  <div class="border--h-7 pb--2 w--full text--center">
+  <div class="border--h-4 pb--2 w--full text--center">
     <div class="title">
       {% render "tide_direction" current_tide: tides[current_tide_index] %}
     </div>
@@ -24,7 +10,8 @@
   <div class="stretch">
     <div class="grid grid--cols-4 h--full">
       {% for tide in tides offset: current_tide_index, limit: 4 %}
-        <div class="flex flex--col flex--center-y">
+        <div class="flex flex--col flex--center-y" style="justify-content: space-around !important;">
+          {% render "tide_tile_icon", icon_size: 32, tide_direction: tide.type %}
           <div class="label label--small {% if tide.type == "H" %}label--outline{% endif %}">
             {% if time_format == "12-hour" %}
               {{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}
@@ -32,7 +19,9 @@
               {{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%H:%M" }}
             {% endif %}
           </div>
-          {% render "tide_tile_icon", icon_size: 32, tide_direction: tide.type %}
+          {% if show_tide_levels == "true" %}
+            <div class="label label--small">{{ tide.v | round: 1 }} {{ units_symbol }}</div>
+          {% endif %}
           <div class="label label--small">{{ tide.t | date: "%s" | plus: utc_offset | date: "%b %e" }}</div>
         </div>
       {% endfor %}
