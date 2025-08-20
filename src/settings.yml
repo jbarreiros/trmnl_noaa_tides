@@ -30,9 +30,12 @@ custom_fields:
       - 24-hour: 24-hour
     default: 12-hour
   - keyname: show_tide_levels
-    field_type: boolean
+    field_type: select
     name: Show Tide Levels
-    default: true
+    options:
+      - 'Yes'
+      - 'No'
+    default: 'no'
   - keyname: datum
     field_type: string
     name: Datum

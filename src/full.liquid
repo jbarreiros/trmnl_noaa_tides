@@ -32,7 +32,7 @@
               <div>{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%H:%M" }}</div>
             {% endif %}
           </div>
-          {% if show_tide_levels == "true" %}
+          {% if show_tide_levels == "yes" %}
             <div class="value value--xxsmall">{{ tide.v | round: 1 }} {{ units_symbol }}</div>
           {% endif %}
           <div class="value value--xxsmall">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%b %e" }}</div>

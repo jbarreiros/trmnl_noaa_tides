@@ -10,7 +10,7 @@ watch:
 custom_fields:
   station_id: '{{ env.STATION_ID }}'
   time_format: 12-hour
-  show_tide_levels: true
+  show_tide_levels: yes
   datum: MLLW
   units: english
 
