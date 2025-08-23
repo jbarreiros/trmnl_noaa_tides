@@ -10,7 +10,7 @@ To identify your station ID, go to https://tidesandcurrents.noaa.gov/.
 
 When this recipe polls, it fetches three datasets.
 
-1. Gets 8 days of tide predictions, starting from yesterday.
+(1) Get 8 days of tide predictions, starting from yesterday.
 
 ```txt
 https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?
@@ -29,16 +29,23 @@ https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?
 - Due to the "Polling URL" not having access to `trmnl.user.utc_offset`, the `begin_date` may actually be a day ahead. To work around that, start with yesterday.
 - 8 days of predictions are fetched so that on Monday, the dataset includes the next upcoming weekend.
 
-2. Gets the station's `name` (city/town) and `state`.
+(2) the station's `name` (city/town) and `state`.
 
 ```txt
 https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{{ station_id }}.json
 ```
 
-3. Gets the latest 5-min tides.
+(3) Get the latest 5-min tides.
 
 ```txt
-https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station={{ station_id }}&product=predictions&datum=MLLW&time_zone=gmt&units=english&format=json
+https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?
+  date=latest
+  &station={{ station_id }}
+  &product=predictions
+  &datum=MLLW
+  &time_zone=gmt
+  &units=english
+  &format=json
 ```
 
 This fetch does not provide any data for display. Its purpose is to supply frequently updated data, ensuring TRMNL refreshes the screen at your selected interval. This is necessary because the tide predictions API always covers an entire day, meaning the data is only considered fresh once a day.
