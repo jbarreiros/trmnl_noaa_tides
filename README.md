@@ -49,3 +49,7 @@ https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?
 ```
 
 This fetch does not provide any data for display. Its purpose is to supply frequently updated data, ensuring TRMNL refreshes the screen at your selected interval. This is necessary because the tide predictions API always covers an entire day, meaning the data is only considered fresh once a day.
+
+## Development
+
+Used [trmnlp](https://github.com/usetrmnl/trmnlp) for local development. That's what the `bin/trmnlp` symlink is pointing to.
