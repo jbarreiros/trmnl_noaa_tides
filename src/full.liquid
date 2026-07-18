@@ -1,75 +1,109 @@
 <div class="layout layout--col gap--none">
-
-  <div class="grid grid--cols-2 border--h-4 pb--2 mb--2">
-    <div class="col col--end">
-      <span class="value" data-value-fit="true">
-        {% render "tide_direction" current_tide: tides[current_tide_index] %}
-      </span>
-    </div>
-    <div class="col col--end">
-      <div class="text--right description">{{ station_name }}</div>
-      <div class="text--right description">{{ station_id }}</div>
-    </div>
-  </div><!--/grid-->
-
-  <div class="stretch">
-    <div class="grid grid--cols-8 border--h-4 h--full pb--2">
-      {% assign prev_tide_day = nil %}
-      {% for tide in tides offset: current_tide_index, limit: 8 %}
-        {% assign curr_tide_day = tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%j" %}
-        <div
-          class="flex flex--col flex--center-y {% if prev_tide_day and curr_tide_day != prev_tide_day %}border--v-4{% endif %}"
-          style="justify-content: space-around !important;">
-          {% render "tide_tile_icon", tide_direction: tide.type %}
-          <div
-            class="value value--xsmall text--center p--1 {% if tide.type == "H" %}bg--gray-5 text-stroke text-stroke--small{% endif %}"
-            style="border-radius:4px;"
-          >
-            {% if time_format == "12-hour" %}
-              <div>{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M" }}</div>
-              <div style="font-size:80%;">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%p" }}</div>
-            {% else %}
-              <div>{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%H:%M" }}</div>
-            {% endif %}
-          </div>
-          {% if show_tide_levels == "yes" %}
-            <div class="value value--xxsmall">{{ tide.v | round: 1 }} {{ units_symbol }}</div>
-          {% endif %}
-          <div class="value value--xxsmall">{{ tide.t | date: "%s" | plus: trmnl.user.utc_offset | date: "%b %e" }}</div>
-        </div>
-        {% assign prev_tide_day = curr_tide_day %}
-      {% endfor %}
-    </div><!--/grid-->
-  </div><!--/stretch-->
-
-  {% if now_is_weekend == false %}
-    <div class="grid grid--cols-4 pt--2 mt--2">
-      <div class="col--span-2 col col--center">
-        <span class="title">Weekend Outlook</span>
+  {% if valid %}
+    <div class="grid grid--cols-2 border--h-4 pb--2 mb--2">
+      <div class="col col--end">
+        <span class="value" data-value-fit="true">
+          {% render 'tide_direction', current_tide: tides[current_tide_index] %}
+        </span>
       </div>
-      <div class="item">
-        <div class="meta"></div>
-        <div class="content">
-          <span class="value value--xxsmall">{{ saturday_high_1 | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}</span>
-          {% if saturday_high_2 != nill %}
-            <span class="value value--xxsmall">{{ saturday_high_2 | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}</span>
-          {% endif %}
-          <span class="description">{{ saturday_high_1 | date: "%s" | plus: trmnl.user.utc_offset | date: "%A" }} High Tides</span>
-        </div><!--/content-->
-      </div><!--/item-->
-      <div class="item">
-        <div class="meta"></div>
-        <div class="content">
-          <span class="value value--xxsmall">{{ sunday_high_1 | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}</span>
-          {% if sunday_high_2 != nill %}
-            <span class="value value--xxsmall">{{ sunday_high_2 | date: "%s" | plus: trmnl.user.utc_offset | date: "%-I:%M %p" }}</span>
-          {% endif %}
-          <span class="description">{{ sunday_high_1 | date: "%s" | plus: trmnl.user.utc_offset | date: "%A" }} High Tides</span>
-        </div><!--/content-->
-      </div><!--/item-->
-    </div><!--/grid-->
+      <div class="col col--end">
+        <div class="text--right description">{{ station_name }}</div>
+        <div class="text--right description">{{ station_id }}</div>
+      </div>
+    </div>
+    <!-- /grid -->
+
+    <div class="stretch">
+      <div class="grid grid--cols-8 border--h-4 h--full pb--2">
+        {% assign prev_tide_day = null %}
+        {% for tide in tides offset: current_tide_index limit: 8 %}
+          {% assign curr_tide_day = tide.t | date: '%s' | plus: trmnl.user.utc_offset | date: '%j' %}
+          <div
+            class="flex flex--col flex--center-y {% if prev_tide_day and curr_tide_day != prev_tide_day %}border--v-4{% endif %}"
+            style="justify-content: space-around !important;"
+          >
+            {% render 'tide_tile_icon', tide_direction: tide.type %}
+            <div
+              class="value value--xsmall text--center p--1 {% if tide.type == "H" %}bg--gray-50 text-stroke text-stroke--small{% endif %}"
+              style="border-radius:4px;"
+            >
+              {% if time_format == '12-hour' %}
+                <div>{{ tide.t | date: '%s' | plus: trmnl.user.utc_offset | date: '%-I:%M' }}</div>
+                <div style="font-size:80%;">{{ tide.t | date: '%s' | plus: trmnl.user.utc_offset | date: '%p' }}</div>
+              {% else %}
+                <div>{{ tide.t | date: '%s' | plus: trmnl.user.utc_offset | date: '%H:%M' }}</div>
+              {% endif %}
+            </div>
+            {% if show_tide_levels == 'yes' %}
+              <div class="value value--xxsmall">
+                {{ tide.v | round: 1 }}
+                {{ units_symbol }}
+              </div>
+            {% endif %}
+            <div class="value value--xxsmall">
+              {{ tide.t | date: '%s' | plus: trmnl.user.utc_offset | date: '%b %e' }}
+            </div>
+          </div>
+          {% assign prev_tide_day = curr_tide_day %}
+        {% endfor %}
+      </div>
+      <!-- /grid -->
+    </div>
+    <!-- /stretch -->
+
+    {% if now_is_weekend == false %}
+      <div class="grid grid--cols-4 pt--2 mt--2">
+        <div class="col--span-2 col col--center">
+          <span class="title">Weekend Outlook</span>
+        </div>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--xxsmall">
+              {{- saturday_high_1 | date: '%s' | plus: trmnl.user.utc_offset | date: '%-I:%M %p' -}}
+            </span>
+            {% if saturday_high_2 != nill %}
+              <span class="value value--xxsmall">
+                {{- saturday_high_2 | date: '%s' | plus: trmnl.user.utc_offset | date: '%-I:%M %p' -}}
+              </span>
+            {% endif %}
+            <span class="description">
+              {{- saturday_high_1 | date: '%s' | plus: trmnl.user.utc_offset | date: '%A' }} High Tides</span
+            >
+          </div>
+          <!-- /content -->
+        </div>
+        <!-- /item -->
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--xxsmall">
+              {{- sunday_high_1 | date: '%s' | plus: trmnl.user.utc_offset | date: '%-I:%M %p' -}}
+            </span>
+            {% if sunday_high_2 != nill %}
+              <span class="value value--xxsmall">
+                {{- sunday_high_2 | date: '%s' | plus: trmnl.user.utc_offset | date: '%-I:%M %p' -}}
+              </span>
+            {% endif %}
+            <span class="description">
+              {{- sunday_high_1 | date: '%s' | plus: trmnl.user.utc_offset | date: '%A' }} High Tides</span
+            >
+          </div>
+          <!-- /content -->
+        </div>
+        <!-- /item -->
+      </div>
+      <!-- /grid -->
+    {% endif %}
+  {% else %}
+    {% render 'sad_pelican' %}
   {% endif %}
+</div>
+<!-- /layout -->
 
-</div><!--/layout-->
-
-{% render "title_bar", instance: trmnl.plugin_settings.instance_name, now: now_utc_seconds, utc_offset: trmnl.user.utc_offset, format: time_format %}
+{% render 'title_bar',
+  instance: trmnl.plugin_settings.instance_name,
+  now: now_utc_seconds,
+  utc_offset: trmnl.user.utc_offset,
+  format: time_format
+%}
